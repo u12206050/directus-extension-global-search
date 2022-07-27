@@ -1,6 +1,6 @@
 # Global Search Module
 
-[](https://github.com/u12206050/directus-extension-global-search/GlobalSearchModule.gif)
+![How it works GIF](https://github.com/u12206050/directus-extension-global-search/blob/main/GlobalSearchModule.gif)
 
 A module for searching across multiple collections at once and returning results to allow you to navigate directly to the item page.
 
