@@ -28,6 +28,8 @@ type Index = {
 	display: string;
 	limit: number;
 	fields: string[];
+	filter?: any;
+	sort?: string;
 };
 
 const indexes: Ref<Record<string, Index>> = ref((GlobalSearchConfig || {}) as Record<string, Index>);
@@ -58,7 +60,7 @@ async function search(value: string) {
 	results.value = {};
 	// For each item in indexes, we need to search for the search value in the fields.
 	const Q = Object.values(indexes.value).map(async (index) => {
-		const { collection, limit, display, fields } = index;
+		const { collection, limit, display, fields, filter, sort } = index;
 		if (fields.length === 0) {
 			delete results.value[collection];
 			return null;
@@ -68,12 +70,18 @@ async function search(value: string) {
 
 		const params = {
 			limit,
+			sort: sort || 'id',
 			filter: {
-				_or: fields.map((field) =>
-					createDeepObject(field, {
-						_icontains: value,
-					})
-				),
+				_and: [
+					...(filter?._and || []),
+					{
+						_or: fields.map((field) =>
+							createDeepObject(field, {
+								_icontains: value,
+							})
+						),
+					}
+				],
 			},
 			fields: ['id'].concat(getFieldsFromTemplate(display)),
 		};
@@ -117,6 +125,7 @@ watch(currentCollection, (collection) => {
 			limit: 5,
 			display: '',
 			fields: [],
+			filter: {},
 		};
 	}
 	currentIndex.value = indexes.value[collection];
@@ -143,6 +152,12 @@ function updateSearchFields(fields: Array<string>) {
 	}
 }
 
+function updateSearchFilter(filter: Record<string, any>) {
+	if (currentIndex.value) {
+		currentIndex.value.filter = filter;
+	}
+}
+
 async function copyJSON(eve) {
 	await navigator.clipboard.writeText(eve.target.innerText);
 	alert('JSON copied.');
@@ -160,7 +175,7 @@ async function copyJSON(eve) {
 				<div v-if="currentIndex" :key="currentCollection">
 					<fieldset>
 						<label>Display template of search results</label>
-						<v-field-template v-model="currentIndex.display" :collection="currentIndex.collection" />
+						<v-field-template v-model="currentIndex.display" :collection="currentIndex.collection" />						
 					</fieldset>
 
 					<fieldset>
@@ -179,6 +194,15 @@ async function copyJSON(eve) {
 							@input="updateSearchFields"
 						/>
 						<p class="hint">Deselect all fields to remove this collection from being searched</p>
+					</fieldset>
+
+					<fieldset>
+						<label>Additional filter to apply during query</label>
+						<interface-system-filter
+							:value="currentIndex.filter"
+							:collection-name="currentIndex.collection"
+							@input="updateSearchFilter"
+						/>						
 					</fieldset>
 				</div>
 				<v-detail label="JSON">

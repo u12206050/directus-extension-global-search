@@ -4,6 +4,12 @@ export default {
 		limit: 10,
 		display: 'The {{title}} in {{topic.name}}',
 		fields: ['title', 'topic.name'],
+		filter: {
+			_and: [
+				{ topic: { _exists: true } },
+			]
+		},
+		sort: 'name',
 	},
 	topics: {
 		collection: 'topics',
