@@ -1,9 +1,12 @@
 <script lang="ts" setup>
-import { computed, Ref, ref, watch } from 'vue';
-import { useStores, useApi, getFieldsFromTemplate } from '@directus/extensions-sdk';
-import CollectionResults from './CollectionResults.vue';
+import { computed, Ref, ref, unref, watch } from 'vue';
+import { useStores, useApi, useExtensions, getFieldsFromTemplate } from '@directus/extensions-sdk';
+import { pluralize } from '@directus/shared/utils';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+import CollectionResults from './CollectionResults.vue';
+import { adjustFieldsForDisplays } from './adjustFieldsForDisplays';
+
 /**
  * Configuration for the module.
  * 
@@ -16,12 +19,22 @@ import { useRouter } from 'vue-router';
  */
 import GlobalSearchConfig from './config.js';
 
-const { useUserStore, useAppStore } = useStores();
+const { useAppStore, useFieldsStore, useUserStore } = useStores();
+const extensions = useExtensions();
 const userStore = useUserStore();
+const fieldsStore = useFieldsStore();
+const appStore = useAppStore();
+
 const api = useApi();
 const { t } = useI18n();
 const router = useRouter();
-const appStore = useAppStore();
+
+function useExtension(type: string, name: string | Ref<string | null>) {
+	return computed(() => {
+		if (unref(name) === null) return null;
+		return (extensions[pluralize(unref(type))].value as any[]).find(({ id }) => id === unref(name)) ?? null;
+	});
+}
 
 type Index = {
 	collection: string;
@@ -58,6 +71,7 @@ async function search(value: string) {
 	const start = Date.now();
 	let hits = 0;
 	results.value = {};
+
 	// For each item in indexes, we need to search for the search value in the fields.
 	const Q = Object.values(indexes.value).map(async (index) => {
 		const { collection, limit, display, fields, filter, sort } = index;
@@ -67,6 +81,11 @@ async function search(value: string) {
 		}
 
 		results.value[collection] = [];
+
+
+		const displayFields = adjustFieldsForDisplays(getFieldsFromTemplate(display), collection, { 
+			fieldsStore, useExtension
+		})
 
 		const params = {
 			limit,
@@ -83,7 +102,7 @@ async function search(value: string) {
 					}
 				],
 			},
-			fields: ['id'].concat(getFieldsFromTemplate(display)),
+			fields: ['id'].concat(displayFields),
 		};
 
 		const url = collection.startsWith('directus_') ? collection.replace('directus_', '') : `/items/${collection}`;
@@ -166,6 +185,12 @@ async function copyJSON(eve) {
 
 <template>
 	<private-view id="global-search" title="Global Search" :class="{'is-admin': isAdmin}">
+		<template #title-outer:prepend>
+      <v-button class="header-icon" rounded disabled icon secondary>
+        <v-icon name="search" />
+      </v-button>
+    </template>
+
 		<template #sidebar>
 			<sidebar-detail v-if="isAdmin" icon="settings" :title="t('configure')" close>
 				<fieldset>
@@ -252,9 +277,6 @@ async function copyJSON(eve) {
 </template>
 
 <style>
-#global-search {
-	background: var(--primary);
-}
 #global-search #navigation .module-nav {
 	display: none !important;
 }
