@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, Ref, ref, unref, watch } from 'vue';
-import { useStores, useApi, useExtensions, getFieldsFromTemplate } from '@directus/extensions-sdk';
+import { getFieldsFromTemplate, useApi, useExtensions, useStores } from '@directus/extensions-sdk';
 import { pluralize } from '@directus/shared/utils';
+import { Ref, computed, ref, unref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import CollectionResults from './CollectionResults.vue';
@@ -17,7 +17,8 @@ import { adjustFieldsForDisplays } from './adjustFieldsForDisplays';
  * Build and then in the index.js file remove the line and at the top of the index.js file add your config.
  *   eg. const GlobalSearchConfig = { …Your actual config here… }
  */
-import GlobalSearchConfig from './config.js';
+//import GlobalSearchConfig from './config.js';
+const GlobalSearchConfig = {"SEARCH_CONFIG": "TO_BE_REPLACED"};
 
 const { useAppStore, useFieldsStore, useUserStore } = useStores();
 const extensions = useExtensions();
@@ -215,7 +216,7 @@ async function copyJSON(eve) {
 						</label>
 						<interface-system-field-tree
 							:value="currentIndex.fields"
-							:collection="currentIndex.collection"
+							:collectionName="currentIndex.collection"
 							@input="updateSearchFields"
 						/>
 						<p class="hint">Deselect all fields to remove this collection from being searched</p>

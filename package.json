@@ -1,6 +1,6 @@
 {
 	"name": "directus-extension-global-search",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"keywords": [
 		"directus",
 		"directus-extension",
@@ -10,19 +10,15 @@
 		"type": "module",
 		"path": "dist/index.js",
 		"source": "src/index.ts",
-		"host": "^9.22.4"
+		"host": "^10.0.0"
 	},
 	"scripts": {
 		"dev": "directus-extension build -w --no-minify",
 		"build": "directus-extension build"
 	},
 	"devDependencies": {
-		"@directus/extensions-sdk": "^9.22.4",
-		"typescript": "^4.7.4",
+		"@directus/extensions-sdk": "9.23",
+		"typescript": "^4.9.5",
 		"vue": "^3.2.37"
-	},
-	"dependencies": {
-		"lodash": "^4.17.21",
-		"lodash.debounce": "^4.0.8"
 	}
 }
