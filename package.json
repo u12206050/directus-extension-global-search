@@ -17,8 +17,11 @@
 		"build": "directus-extension build"
 	},
 	"devDependencies": {
-		"@directus/extensions-sdk": "9.23",
-		"typescript": "^4.9.5",
-		"vue": "^3.2.37"
+		"@directus/extensions-sdk": "^11.0.2",
+		"typescript": "^5.4.4",
+		"vue": "^3.4.21"
+	},
+	"dependencies": {
+		"@directus/utils": "^11.0.7"
 	}
 }

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { getFieldsFromTemplate, useApi, useExtensions, useStores } from '@directus/extensions-sdk';
-import { pluralize } from '@directus/shared/utils';
+import { pluralize } from '@directus/utils';
 import { Ref, computed, ref, unref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
