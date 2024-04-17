@@ -1,5 +1,5 @@
 
-import { Field } from '@directus/shared/types';
+import { Field } from '@directus/types';
 import { computed } from 'vue';
 
 export function adjustFieldsForDisplays(fields: string[], parentCollection: string, {
