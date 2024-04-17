@@ -6,7 +6,9 @@ A module for searching across multiple collections at once and returning results
 
 ## Install
 
- - Copy the `global-search` folder into `your_directus_project/extensions/modules/`
+ - REQUIRED TO BUILD IT YOURSELF FOR NOW
+ - Copy the `api.js` and `app.js` files into `your_directus_project/extensions/global-search/dist`
+ - Copy the `package.json` file into `your_directus_project/extensions/global-search`
  - Enable the module under Project Settings in the Directus Admin Panel.
 
 ## Setup (in admin panel)

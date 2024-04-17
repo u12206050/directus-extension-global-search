@@ -1,5 +1,6 @@
 {
 	"name": "directus-extension-global-search",
+	"type": "module",
 	"version": "2.0.0",
 	"keywords": [
 		"directus",
@@ -7,10 +8,20 @@
 		"directus-custom-module"
 	],
 	"directus:extension": {
-		"type": "module",
-		"path": "dist/index.js",
+		"type": "bundle",
+		"path": {
+			"app": "dist/app.js",
+			"api": "dist/api.js"
+		  },
 		"source": "src/index.ts",
-		"host": "^10.0.0"
+		"host": "^10.0.0",
+		"entries": [
+			{
+			  "type": "module",
+			  "name": "module",
+			  "source": "src/modules/index.ts"
+			}
+		  ]
 	},
 	"scripts": {
 		"dev": "directus-extension build -w --no-minify",
